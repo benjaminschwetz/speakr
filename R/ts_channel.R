@@ -1,6 +1,6 @@
 create_channel <- function(
   id,
-  key,
+  key = NA_character_,
   private = FALSE
 ){
   x <- structure(
@@ -15,8 +15,8 @@ create_channel <- function(
 
 make_ts_path <- function(channel,
                          type,
-                         last,
-                         field,
+                         last = FALSE,
+                         field = NA_integer_,
                          form = "xml"){
   type_string <- dplyr::case_when(
     type == "fields" ~ paste(type, field, sep="/"),
@@ -42,22 +42,25 @@ make_ts_query <- function(channel,
   l
 }
 
-build_ts_url <- function(
+compose_ts_url <- function(
   channel,
   request_type,
-  parameters
+  last = FALSE,
+  field = NA_integer_,
+  parameters = list()
 ){
   x <- list(
     scheme = "https",
-    hostname= "api.thingspeak.com/",
+    hostname= "api.thingspeak.com",
     port = NULL,
-    path = make_ts_path(channel, request_type),
+    path = make_ts_path(channel, request_type, last, field),
     params = NULL,
     fragment = NULL,
     query = make_ts_query(channel, parameters),
     username = NULL,
     password = NULL
   )
-  assign(x, "class") <- c("thingspeak url", "url")
+  attr(x, "class") <- c("thingspeak url", "url")
+  x
 }
 
