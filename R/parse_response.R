@@ -1,4 +1,4 @@
-parse_response <- function(response) {
+.parse_response <- function(response) {
   l <- response %>%
     httr::content() %>%
     xml2::as_list() %>%

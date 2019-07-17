@@ -13,7 +13,7 @@ create_channel <- function(
   x
 }
 
-make_ts_path <- function(channel,
+.make_ts_path <- function(channel,
                          type,
                          last = FALSE,
                          field = NA_integer_,
@@ -32,7 +32,7 @@ make_ts_path <- function(channel,
   return_str
 }
 
-make_ts_query <- function(channel,
+.make_ts_query <- function(channel,
                           ...){
   if(channel$private){
     l<- list(
@@ -42,7 +42,7 @@ make_ts_query <- function(channel,
   l
 }
 
-compose_ts_url <- function(
+.compose_ts_url <- function(
   channel,
   request_type,
   last = FALSE,
@@ -53,10 +53,10 @@ compose_ts_url <- function(
     scheme = "https",
     hostname= "api.thingspeak.com",
     port = NULL,
-    path = make_ts_path(channel, request_type, last, field),
+    path = .make_ts_path(channel, request_type, last, field),
     params = NULL,
     fragment = NULL,
-    query = make_ts_query(channel, parameters),
+    query = .make_ts_query(channel, parameters),
     username = NULL,
     password = NULL
   )
