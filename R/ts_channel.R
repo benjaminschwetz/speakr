@@ -1,3 +1,13 @@
+#' Title
+#'
+#' @param id
+#' @param key
+#' @param private
+#'
+#' @return
+#' @export
+#'
+#' @examples
 create_channel <- function(
   id,
   key = NA_character_,

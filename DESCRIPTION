@@ -3,7 +3,7 @@ Type: Package
 Title: A Wrapper for the Thingspeak(TM) API
 Version: 0.0.1
 Author: Benjamin Schwetz
-Maintainer: Benjamin Schwetz
+Maintainer: Benjamin Schwetz <benjamin.schwetz@gmx.de>
 Description: to connect to thingspeak
 License: GPL-3
 Encoding: UTF-8
