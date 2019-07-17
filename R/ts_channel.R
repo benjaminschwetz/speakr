@@ -9,7 +9,7 @@ create_channel <- function(
       key = key,
       private = private
     ),
-    class = "thingspeak channel")
+    class = "ts channel")
   x
 }
 
@@ -60,7 +60,7 @@ compose_ts_url <- function(
     username = NULL,
     password = NULL
   )
-  attr(x, "class") <- c("thingspeak url", "url")
+  attr(x, "class") <- c("ts url", "url")
   x
 }
 

@@ -21,10 +21,14 @@ parse_response <- function(response) {
     purrr::modify_in("feeds",
                      ~ purrr::map_df(.x, ~ dplyr::bind_rows(.x)) %>%
                        dplyr::mutate_all(readr::parse_guess))
-    # purrr::modify_in("feeds", purrr::flatten_dfr)
-  # l$location <- list(
-  #   l$latitude,
-  #   l$longitude
-  # )
+  #renaming the fields
+  fields <- l[stringr::str_detect(names(l), "field")] %>%
+    unlist
+  columns <- names(fields) %>%
+    magrittr::set_names(fields) %>%
+    magrittr::extract(. %in% colnames(l$feeds))
+  l <- l %>% purrr::modify_in( "feeds",
+                               ~.x %>% dplyr::rename(!!!columns)
+  )
   l
 }
