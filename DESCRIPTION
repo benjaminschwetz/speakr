@@ -12,7 +12,8 @@ LazyData: true
 RoxygenNote: 6.1.1
 Imports: 
     magrittr,
-    curl,
     purrr,
     dplyr,
-    xml2
+    xml2,
+    httr,
+    stringr
