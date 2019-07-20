@@ -13,7 +13,12 @@ create_channel <- function(
   key = NA_character_,
   private = FALSE
 ){
-  x <- structure(
+  if(private & is.na(key)) {stop("Error: API Key for private channel missing")}
+  if(!is.na(key) & !private) {
+    private <- TRUE
+    warning("API Key supplied, key set to be private.")
+  }
+    x <- structure(
     list(
       id = id,
       key = key,
