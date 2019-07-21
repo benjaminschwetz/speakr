@@ -12,18 +12,17 @@
                      ~ .x %>%
                        purrr::flatten_chr() %>%
                        readr::parse_guess()
-                       )
-
-  if(!is.null(l[[df_element]])){
+    )
+  if(!is.null(l[[df_element]]) & length(l[[df_element]]) > 0){
     l <- l %>%
-    purrr::modify_in(df_element,
-                     ~purrr::discard(
-                       .x,
-                       ~ .x %>%
-                         purrr::map_lgl(~ length(.x) == 0) %>%
-                         any()
-                     )
-    ) %>%
+      purrr::modify_in(df_element,
+                       ~purrr::discard(
+                         .x,
+                         ~ .x %>%
+                           purrr::map_lgl(~ length(.x) == 0) %>%
+                           any()
+                       )
+      ) %>%
       purrr::modify_in(df_element,
                        ~ purrr::modify_depth(.x, 2, purrr::flatten_chr)) %>%
       purrr::modify_in(df_element,
