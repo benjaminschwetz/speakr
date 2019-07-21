@@ -15,4 +15,5 @@ Imports:
     dplyr,
     xml2,
     httr,
-    stringr
+    stringr,
+    tidyselect

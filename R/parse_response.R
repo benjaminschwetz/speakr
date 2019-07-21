@@ -2,16 +2,18 @@
   l <- response %>%
     httr::content() %>%
     xml2::as_list() %>%
-    purrr::flatten() %>%
-    purrr::modify_if(~length(.x) == 1,
-                     ~ .x %>%
-                       purrr::flatten_chr() %>%
-                       readr::parse_guess()
-                       )
+    purrr::flatten()
   df_element <- l %>%
     names() %>%
     stringr::str_extract("feed(s)*") %>%
     na.omit()
+  l <- l %>%
+    purrr::modify_at(dplyr::vars(-df_element),
+                     ~ .x %>%
+                       purrr::flatten_chr() %>%
+                       readr::parse_guess()
+                       )
+
   if(!is.null(l[[df_element]])){
     l <- l %>%
     purrr::modify_in(df_element,
