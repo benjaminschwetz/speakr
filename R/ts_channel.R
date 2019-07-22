@@ -38,12 +38,14 @@ create_channel <- function(
     TRUE ~ type
   )
   return_str <-
-    paste("channels",
-         channel$id,
-         type_string,
-         sep = "/")
-  if(last) return_str <- paste(return_str, "last", sep = "/")
-  return_str <- paste0(return_str, ".", form)
+    c(    "channels",
+          channel$id,
+          type_string,
+          if(last) "last" else NA
+          ) %>%
+    na.omit() %>%
+    paste(collapse = "/") %>%
+    paste0(".", form)
   return_str
 }
 

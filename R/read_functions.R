@@ -62,3 +62,20 @@ read_field <- function(channel, field, parameters = list()) {
     .build_n_get() %>%
     .parse_response()
 }
+
+#' Title
+#'
+#' @param channel
+#'
+#' @return
+#' @export
+#'
+#' @examples
+read_settings <- function(channel){
+  .compose_ts_url(
+    channel = channel,
+    request_type = NA_character_
+  ) %>%
+    .build_n_get() %>%
+    .parse_response()
+}

@@ -1,11 +1,16 @@
 .parse_response <- function(response) {
+  if(response$status_code != 200){
+    stop(
+      sprintf("Response code is %d", response$status_code)
+    )
+  }
   l <- response %>%
     httr::content() %>%
     xml2::as_list() %>%
     purrr::flatten()
   df_element <- l %>%
     names() %>%
-    stringr::str_extract("feed(s)*") %>%
+    stringr::str_extract("feed(s)*|tags") %>%
     na.omit()
   l <- l %>%
     purrr::modify_at(dplyr::vars(-df_element),
@@ -13,7 +18,8 @@
                        purrr::flatten_chr() %>%
                        readr::parse_guess()
     )
-  if(!is.null(l[[df_element]]) & length(l[[df_element]]) > 0){
+  if(!is.null(l[[df_element]]) &
+     length(l[[df_element]]) > 0){
     l <- l %>%
       purrr::modify_in(df_element,
                        ~purrr::discard(
@@ -29,14 +35,16 @@
                        ~ purrr::map_df(.x, ~ dplyr::bind_rows(.x)) %>%
                          dplyr::mutate_all(readr::parse_guess))
     #renaming the fields
-    fields <- l[stringr::str_detect(names(l), "field")] %>%
-      unlist
-    columns <- names(fields) %>%
-      magrittr::set_names(fields) %>%
-      magrittr::extract(. %in% colnames(l[[df_element]]))
-    l <- l %>% purrr::modify_in( df_element,
-                                 ~.x %>% dplyr::rename(!!!columns)
-    )
+    if(stringr::str_detect(df_element,"feed(s)*")){
+      fields <- l[stringr::str_detect(names(l), "field")] %>%
+        unlist
+      columns <- names(fields) %>%
+        magrittr::set_names(fields) %>%
+        magrittr::extract(. %in% colnames(l[[df_element]]))
+      l <- l %>% purrr::modify_in( df_element,
+                                   ~.x %>% dplyr::rename(!!!columns)
+      )
+    }
   }
   l
 }
