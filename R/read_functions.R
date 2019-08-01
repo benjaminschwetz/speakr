@@ -72,6 +72,7 @@ read_field <- function(channel, field, parameters = list()) {
 #'
 #' @examples
 read_settings <- function(channel){
+  if(channel$private) stop("Private Channels require User API key. Not implemented yet")
   .compose_ts_url(
     channel = channel,
     request_type = NA_character_
