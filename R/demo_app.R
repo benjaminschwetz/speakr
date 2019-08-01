@@ -1,3 +1,9 @@
+#' Title
+#'
+#' @return
+#' @export
+#'
+#' @examples
 app_demo <- function() {
   library(shiny)
   library(tidyverse)
