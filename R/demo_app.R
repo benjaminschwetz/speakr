@@ -10,7 +10,8 @@ app_demo <- function() {
       ),
       menuItem(
         "Time series", tabName = "timeseries", icon = icon("chart-line")
-      )
+      ),
+      menuItem("Channels", tabName = "channels", icon = icon("database"))
     )
   )
   db_header <-  dashboardHeader(
@@ -44,31 +45,72 @@ app_demo <- function() {
                 )
               )
 
-      )
+      ),
+      tabItem("channels",
+              fluidRow(
+                box(
+                  textInput("chan_id", "Channel ID"),
+                  textInput("chan_key", "Channel Key"),
+                  actionButton("chan_submit", "Submit"),
+                  title = "Add a new channel"
+                ),
+                box(
+                  uiOutput("select_active_chan"),
+                  title = "Select active Channel"
+                )
+              ))
     )
   )
 
   ui <- dashboardPage(db_header, db_sidebar, db_body)
   # ---------
   server <- function(input, output) {
-    # demo channels
-    channel_list <- reactive({
-      l <- list() %>%
-        append(list(create_channel("9"))) %>%
-        append(list(create_channel("9", "E52AWRAV1RSXQQJW", TRUE)))
-      l %>% purrr::map(
-        ~ .x %>%
-          purrr::list_modify(
-            read_settings(.x)
-          ) %>%
-          flatten()
-      )
+    values <- reactiveValues(
+      channel_list = list() %>%
+        append(list(create_channel(9))) %>%
+        purrr::map(
+          ~ .x %>%
+            purrr::list_modify(
+              read_settings(.x)
+            ) %>%
+            flatten()
+        ),
+      active_channel = 1
+    )
+    observeEvent(input$chan_submit, {
+      if(input$chan_key != "") {
+        channel <- create_channel(input$chan_id, input$chan_key)
+      } else channel <- create_channel(input$chan_id)
+      values$channel_list <-
+        values$channel_list %>%
+        append(list(channel)) %>%
+        purrr::map(
+          ~ .x %>%
+            purrr::list_modify(
+              read_data(.x, list(results = 0))
+            ) %>%
+            flatten()
+        )
+    })
+    output$select_active_chan <- renderUI({
+      radioButtons("active_channel", "",
+                   choices = map(values$channel_list, "name"),
+                   selected = values$channel_list[[1]]$name
+                   )
+    })
+    active_channel <- reactive({
+      values$channel_list[[values$active_channel]]
+    })
+    observeEvent(input$active_channel, {
+      values$active_channel <-
+        match(input$active_channel,
+            map_chr(values$channel_list, "name"))
     })
     # latest boxes
     boxes <- reactive({
       invalidateLater(2000)
       renderUI({
-        latest_boxes(channel_list()[[1]],
+        latest_boxes(active_channel(),
                      formatting = c(as.character,
                                     identity,
                                     round,
@@ -82,7 +124,7 @@ app_demo <- function() {
     hist_data <- eventReactive(
       input$refresh,
       {
-        feeds <- read_data(channel_list()[[1]], list( days = input$days, timescale = input$timescale)) %>%
+        feeds <- read_data(active_channel(), list( days = input$days, timescale = input$timescale)) %>%
           extract_feeds_df()
       }
     )
