@@ -48,3 +48,22 @@
   }
   l
 }
+#' Title
+#'
+#' @param data_response
+#'
+#' @return
+#' @export
+#'
+#' @examples
+extract_feeds_df <- function(data_response) {
+  n <- data_response %>%
+    names() %>%
+    stringr::str_detect("field\\d+") %>%
+    which %>%
+    length()
+  df <- data_response %>%
+    magrittr::extract2("feeds")
+  attr(df, "n_fields") <- n
+  df
+}
