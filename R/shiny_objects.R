@@ -61,3 +61,31 @@ battery_icon <- function(x, max = 1000){
   index <- 1 + (x*4)/max
   icon(paste0("battery-", load[index]))
 }
+
+#' Title
+#'
+#' @param channel
+#' @param days
+#'
+#' @return
+#' @export
+#'
+#' @examples
+demo_plot <- function(data) {
+  not_data <- length(data) - attr(data, "n_fields")
+  if(length(data) == 0){
+    ggplot2::ggplot()+
+      ggplot2::ggtitle("No data for this period")
+  } else {
+  data %>%
+    tidyr::gather("Sensor", "Value", -(1:not_data)) %>%
+    dplyr::rename("Timestamp" = "created-at") %>%
+      ggplot2::ggplot() +
+      ggplot2::aes(x = Timestamp,
+        y = Value) +
+      ggplot2::geom_line()+
+      ggplot2::facet_wrap(~Sensor,
+               ncol = 1,
+               scales = "free_y")
+  }
+}
